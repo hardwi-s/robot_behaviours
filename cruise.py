@@ -1,5 +1,5 @@
 from behaviour import Behaviour
-from motor_command import MotorCommand
+from motion_command import MotionCommand
 
 
 class Cruise(Behaviour):
@@ -8,4 +8,4 @@ class Cruise(Behaviour):
         super(Cruise, self).__init__(priority, "cruise")
 
     def act(self, sensors=None):
-        return MotorCommand(75, 0)
+        return MotionCommand(75, 0)

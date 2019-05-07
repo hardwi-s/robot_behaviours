@@ -1,9 +1,9 @@
 class RobotBase:
 
-    def __init__(self, wheel_separation, max_speed, ticks_per_metre):
+    def __init__(self, wheel_separation, max_speed, motor_controller):
         self.__wheel_separation = wheel_separation
         self.__max_motor_speed = max_speed
-        self.__ticks_per_metre = ticks_per_metre
+        self.__motor_controller = motor_controller
 
     @property
     def wheel_separation(self):
@@ -21,10 +21,15 @@ class RobotBase:
     def max_motor_speed(self, limit):
         self.__max_motor_speed = limit
 
-    @property
-    def ticks_per_metre(self):
-        return self.__ticks_per_metre
+    def do_motion_command(self, command):
+        angular_speed = command.rotation * self.__wheel_separation
 
-    @ticks_per_metre.setter
-    def ticks_per_metre(self, ticks):
-        self.__ticks_per_metre = ticks
+        speed_left = command.velocity - angular_speed
+        speed_right = command.velocity + angular_speed
+
+        # Adjust speeds if they exceed the maximum.
+        if max(speed_left, speed_right) > self.__max_motor_speed:
+            factor = self.__max_motor_speed / max(speed_left, speed_right)
+            speed_left *= factor
+            speed_right *= factor
+        self.__motor_controller.set_speeds(speed_left, speed_right)

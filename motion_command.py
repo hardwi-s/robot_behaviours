@@ -1,4 +1,4 @@
-class MotorCommand:
+class MotionCommand:
 
     def __init__(self, velocity=0.0, rotation=0.0):
         self.__velocity = velocity
