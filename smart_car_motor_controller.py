@@ -1,8 +1,8 @@
-from motor_controller import MotorController
+from dual_motor_controller import DualMotorController
 from gpiozero import Motor
 
 
-class SmartCarMotorController(MotorController):
+class SmartCarDualMotorController(DualMotorController):
     def __init__(self):
         self.__left_motor = Motor(4, 14)
         self.__right_motor = Motor(18, 17)

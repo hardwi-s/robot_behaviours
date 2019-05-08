@@ -1,14 +1,20 @@
-from proximity_sensor import ProximitySensor
 from sensor_reading import SensorReading
 
 
 class RobotBase:
 
-    def __init__(self, wheel_separation, max_speed, motor_controller):
+    def __init__(self, wheel_separation, max_speed, motor_controller, sensors):
+        """
+
+        :param wheel_separation: in metres
+        :param max_speed: in m/sec
+        :param motor_controller: controller for wheel motors
+        :param sensors: list of robot base sensors
+        """
         self.__wheel_separation = wheel_separation
         self.__max_motor_speed = max_speed
         self.__motor_controller = motor_controller
-        self.__proximity_front = ProximitySensor('proximity_front', 10)
+        self.__sensors = sensors
 
     @property
     def wheel_separation(self):
@@ -27,6 +33,11 @@ class RobotBase:
         self.__max_motor_speed = limit
 
     def do_motion_command(self, command):
+        """
+        Convert motion to left and right motor speeds and sets
+        these in the controller
+        :param command: The motion as a MotionCommand
+        """
         angular_speed = command.rotation * self.__wheel_separation
 
         speed_left = command.velocity - angular_speed
@@ -40,7 +51,14 @@ class RobotBase:
         self.__motor_controller.set_speeds(speed_left, speed_right)
 
     def read_sensors(self):
-        return_values = SensorReading()
-        return_values.name = self.__proximity_front.name
-        return_values.value = self.__proximity_front.value
+        """
+        Reads all the base sensors
+        :return: A list of SensorReading
+        """
+        return_values = []
+        for sensor in self.__sensors:
+            reading = SensorReading()
+            reading.name = sensor.name
+            reading.value = sensor.value
+            return_values.append(reading)
         return return_values

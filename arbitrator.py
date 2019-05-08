@@ -1,7 +1,7 @@
 class Arbitrator:
     """
     Takes a list of behaviours and calls each one's get_action. If the behaviour returns
-    a command then it is considered for being the winning behaviour. The behaviour with the
+    a command then it is considered a candidate for the winning behaviour. The behaviour with the
     highest priority is considered the winner.
     """
     def __init__(self, behaviours):

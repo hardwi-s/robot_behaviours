@@ -2,7 +2,16 @@ from abc import abstractmethod
 
 
 class Behaviour:
+    """
+    Abstract base class for behaviours.
 
+    Behaviours have a priority, a name and a get_action.
+    The arbitrator calls get_action to allow the behaviour
+    to return a command, then calls winner to inform the
+    behaviour whether it has control or not. Priorities
+    start from zero as the lowest priority.
+
+    """
     def __init__(self, priority, name):
         self.__priority = priority
         self.__name = name
