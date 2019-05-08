@@ -1,9 +1,14 @@
+from proximity_sensor import ProximitySensor
+from sensor_reading import SensorReading
+
+
 class RobotBase:
 
     def __init__(self, wheel_separation, max_speed, motor_controller):
         self.__wheel_separation = wheel_separation
         self.__max_motor_speed = max_speed
         self.__motor_controller = motor_controller
+        self.__proximity_front = ProximitySensor('proximity_front', 10)
 
     @property
     def wheel_separation(self):
@@ -33,3 +38,9 @@ class RobotBase:
             speed_left *= factor
             speed_right *= factor
         self.__motor_controller.set_speeds(speed_left, speed_right)
+
+    def read_sensors(self):
+        return_values = SensorReading()
+        return_values.name = self.__proximity_front.name
+        return_values.value = self.__proximity_front.value
+        return return_values

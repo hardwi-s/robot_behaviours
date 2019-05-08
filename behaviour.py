@@ -24,5 +24,9 @@ class Behaviour:
         self.__name = value
 
     @abstractmethod
-    def act(self, sensors=None):
+    def get_action(self, sensors=None):
         return None
+
+    @abstractmethod
+    def winner(self, winner=False):
+        pass
