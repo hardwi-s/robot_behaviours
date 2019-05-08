@@ -8,6 +8,14 @@ class Arbitrator:
         self.__behaviours = behaviours
 
     def arbitrate(self, sensors):
+        '''
+        Iterate through behaviours and find the winner. Call back the behaviours to
+        inform them of their winning status, and return the winning command
+        :param sensors: Robot sensor readings
+        :type sensors: list of SensorReading
+        :return: Winning command
+        :rtype: MotionCommand
+        '''
         winning_behaviour = None
         winning_command = None
         for behaviour in self.__behaviours:
