@@ -9,6 +9,7 @@ class SmartCarMotorController(DualMotorController):
         self.__right_motor = Motor(18, 17)
 
     def set_speeds(self, speed_left, speed_right):
+        print(str(speed_left), str(speed_right))
         if speed_left < 0:
             self.__left_motor.backward(speed_left)
         else:
