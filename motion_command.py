@@ -4,21 +4,21 @@ class MotionCommand:
     of a velocity in m/sec and a rotation in rad/sec
     """
     def __init__(self, velocity=0.0, rotation=0.0):
-        self.__velocity = velocity
-        self.__rotation = rotation
+        self._velocity = velocity
+        self._rotation = rotation
 
     @property
     def velocity(self):
-        return self.__velocity
+        return self._velocity
 
     @property
     def rotation(self):
-        return self.__rotation
+        return self._rotation
 
     @velocity.setter
     def velocity(self, value):
-        self.__velocity = value
+        self._velocity = value
 
     @rotation.setter
     def rotation(self, value):
-        self.__rotation = value
+        self._rotation = value

@@ -4,21 +4,21 @@ class SensorReading:
     and the value of the sensor.
     """
     def __init__(self):
-        self.__name = None
-        self.__value = None
+        self._name = None
+        self._value = None
 
     @property
     def name(self):
-        return self.__name
+        return self._name
 
     @name.setter
     def name(self, value):
-        self.__name = value
+        self._name = value
 
     @property
     def value(self):
-        return self.__value
+        return self._value
 
     @value.setter
     def value(self, new_value):
-        self.__value = new_value
+        self._value = new_value

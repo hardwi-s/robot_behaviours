@@ -11,26 +11,26 @@ class RobotBase:
         :param motor_controller: controller for wheel motors
         :param sensors: list of robot base sensors
         """
-        self.__wheel_separation = wheel_separation
-        self.__max_motor_speed = max_speed
-        self.__motor_controller = motor_controller
-        self.__sensors = sensors
+        self._wheel_separation = wheel_separation
+        self._max_motor_speed = max_speed
+        self._motor_controller = motor_controller
+        self._sensors = sensors
 
     @property
     def wheel_separation(self):
-        return self.__wheel_separation
+        return self._wheel_separation
 
     @wheel_separation.setter
     def wheel_separation(self, separation):
-        self.__wheel_separation = separation
+        self._wheel_separation = separation
 
     @property
     def max_motor_speed(self):
-        return self.__max_motor_speed
+        return self._max_motor_speed
 
     @max_motor_speed.setter
     def max_motor_speed(self, limit):
-        self.__max_motor_speed = limit
+        self._max_motor_speed = limit
 
     def do_motion_command(self, command):
         """
@@ -38,17 +38,17 @@ class RobotBase:
         these in the controller
         :param command: The motion as a MotionCommand
         """
-        angular_speed = command.rotation * self.__wheel_separation
+        angular_speed = command.rotation * self._wheel_separation
 
         speed_left = command.velocity - angular_speed
         speed_right = command.velocity + angular_speed
 
         # Adjust speeds if they exceed the maximum.
-        if max(speed_left, speed_right) > self.__max_motor_speed:
-            factor = self.__max_motor_speed / max(speed_left, speed_right)
+        if max(speed_left, speed_right) > self._max_motor_speed:
+            factor = self._max_motor_speed / max(speed_left, speed_right)
             speed_left *= factor
             speed_right *= factor
-        self.__motor_controller.set_speeds(speed_left, speed_right)
+        self._motor_controller.set_speeds(speed_left, speed_right)
 
     def read_sensors(self):
         """
@@ -56,7 +56,7 @@ class RobotBase:
         :return: A list of SensorReading
         """
         return_values = []
-        for sensor in self.__sensors:
+        for sensor in self._sensors:
             reading = SensorReading()
             reading.name = sensor.name
             reading.value = sensor.value

@@ -5,16 +5,16 @@ from gpiozero import Motor
 class SmartCarMotorController(DualMotorController):
     def __init__(self):
         super(SmartCarMotorController, self).__init__()
-        self.__left_motor = Motor(4, 14)
-        self.__right_motor = Motor(18, 17)
+        self._left_motor = Motor(4, 14)
+        self._right_motor = Motor(18, 17)
 
     def set_speeds(self, speed_left, speed_right):
         print(str(speed_left), str(speed_right))
         if speed_left < 0:
-            self.__left_motor.backward(speed_left)
+            self._left_motor.backward(speed_left)
         else:
-            self.__left_motor.forward(speed_left)
+            self._left_motor.forward(speed_left)
         if speed_right < 0:
-            self.__right_motor.backward(speed_right)
+            self._right_motor.backward(speed_right)
         else:
-            self.__right_motor.forward(speed_right)
+            self._right_motor.forward(speed_right)

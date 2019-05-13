@@ -13,24 +13,24 @@ class Behaviour:
 
     """
     def __init__(self, priority, name):
-        self.__priority = priority
-        self.__name = name
+        self._priority = priority
+        self._name = name
 
     @property
     def priority(self):
-        return self.__priority
+        return self._priority
 
     @priority.setter
     def priority(self, value):
-        self.__priority = value
+        self._priority = value
 
     @property
     def name(self):
-        return self.__name
+        return self._name
 
     @name.setter
     def name(self, value):
-        self.__name = value
+        self._name = value
 
     @abstractmethod
     def get_action(self, sensors=None):
