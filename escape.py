@@ -4,6 +4,7 @@ from random import random
 
 from behaviour import Behaviour
 from motion_command import MotionCommand
+from timeout import Timeout
 
 
 class State(Enum):
@@ -19,7 +20,7 @@ class Escape(Behaviour):
     def __init__(self, priority):
         super(Escape, self).__init__(priority, 'escape')
         self._state = State.WAITING_TO_START
-        self._start_time = 0.0
+        self._timeout = Timeout()
         self._clear_sensors()
         self._turn_right = False
 
@@ -54,16 +55,30 @@ class Escape(Behaviour):
                 self._turn_right = self._random_turn()
             return MotionCommand(-0.1, 0)
 
-        if self._state == State.REVERSING:
+        elif self._state == State.REVERSING:
             return MotionCommand(-0.1, 0)
+
+        elif self._state == State.TURNING and self._turn_right:
+            return MotionCommand(0, -2.5)
+        elif self._state == State.TURNING and not self._turn_right:
+            return MotionCommand(0, 2.5)
+
+        return None
 
     def winner(self, winner=False):
         if not winner:
             self._state = State.WAITING_TO_START
+
         elif self._state == State.WAITING_TO_START:
-            self._start_time = time.monotonic()
+            self._timeout.start(1)
             self._state = State.REVERSING
-        elif self._state == State.REVERSING:
+
+        elif self._state == State.REVERSING and self._timeout.is_expired():
+            self._timeout.start(0.5)
+            self._state = State.TURNING
+
+        elif self._state == State.TURNING and self._timeout.is_expired():
+            self._state = State.WAITING_TO_START
 
 
 
