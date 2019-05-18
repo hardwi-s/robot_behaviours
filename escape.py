@@ -42,20 +42,25 @@ class Escape(Behaviour):
     def _random_turn(self):
         return random() > 0.5
 
+    def _is_sensor_active(self):
+        return self._fl_set or self._fr_set or self._f_set
+
     def get_action(self, sensors=None):
         self._set_sensors(sensors)
 
         if self._state == State.WAITING_TO_START:
+            if not self._is_sensor_active():
+                return None
             if self._fl_set:
                 self._turn_right = True
             elif self._fr_set:
                 self._turn_right = False
             elif self._f_set:
                 self._turn_right = self._random_turn()
-            return MotionCommand(-0.1, 0)
+            return MotionCommand(-0.4, 0)
 
         elif self._state == State.REVERSING:
-            return MotionCommand(-0.1, 0)
+            return MotionCommand(-0.4, 0)
 
         elif self._state == State.TURNING and self._turn_right:
             return MotionCommand(0, -2.5)

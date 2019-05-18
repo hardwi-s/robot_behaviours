@@ -10,7 +10,7 @@ class Cruise(Behaviour):
         super(Cruise, self).__init__(priority, "cruise")
 
     def get_action(self, sensors=None):
-        return MotionCommand(0.1, 0)
+        return MotionCommand(0.4, 0)
 
     def winner(self, winner=False):
         pass
