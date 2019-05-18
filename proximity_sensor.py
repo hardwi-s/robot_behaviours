@@ -13,6 +13,10 @@ class ProximitySensor(DigitalInputDevice):
         self._name = name
 
     @property
+    def value(self):
+        return not super().value
+
+    @property
     def name(self):
         return self._name
 
