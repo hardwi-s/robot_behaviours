@@ -28,7 +28,10 @@ behaviours = [cruise_behaviour, escape_behaviour]
 arbitrator = Arbitrator(behaviours)
 
 while True:
-    command = arbitrator.arbitrate(base.read_sensors())
+    sensors = base.read_sensors()
+    for sensor in sensors:
+        print(sensor.name + " " + str(sensor.value))
+    command = arbitrator.arbitrate(sensors)
     print(arbitrator.get_winning_behaviour().name)
     base.do_motion_command(command)
-    time.sleep(1)
+    time.sleep(0.1)

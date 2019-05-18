@@ -32,13 +32,12 @@ class Escape(Behaviour):
     def _set_sensors(self, sensors):
         self._clear_sensors()
         for sensor in sensors:
-            if sensor.value != 0:
-                if sensor.name == 'front_left_ir':
-                    self._fl_set = True
-                elif sensor.name == 'front_right_ir':
-                    self._fr_set = True
-                elif sensor.name == 'front_ir':
-                    self._f_set = True
+            if sensor.name == 'front_left_ir':
+                self._fl_set = sensor.value
+            elif sensor.name == 'front_right_ir':
+                self._fr_set = sensor.value
+            elif sensor.name == 'front_ir':
+                self._f_set = sensor.value
 
     def _random_turn(self):
         return random() > 0.5
