@@ -23,7 +23,7 @@ if __name__ == "__main__":
     front_ir_sensor = ProximitySensor(name='front_ir', pin=26)
 
     while True:
-        print(front_left_ir_sensor.name + " " + front_left_ir_sensor.value)
-        print(front_right_ir_sensor.name + " " + front_right_ir_sensor.value)
-        print(front_ir_sensor.name + " " + front_ir_sensor.value)
+        print(front_left_ir_sensor.name + " " + str(front_left_ir_sensor.value))
+        print(front_right_ir_sensor.name + " " + str(front_right_ir_sensor.value))
+        print(front_ir_sensor.name + " " + str(front_ir_sensor.value))
         sleep(0.5)
