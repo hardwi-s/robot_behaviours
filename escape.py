@@ -17,6 +17,7 @@ class Escape(Behaviour):
     """
     Escape behaviour. Moves the robot back then turns.
     """
+
     def __init__(self, priority):
         super(Escape, self).__init__(priority, 'escape')
         self._state = State.WAITING_TO_START
@@ -85,4 +86,7 @@ class Escape(Behaviour):
             self._state = State.WAITING_TO_START
 
 
-
+if __name__ == "__main__":
+    escape = Escape(0)
+    while True:
+        print(str(escape._random_turn()))
