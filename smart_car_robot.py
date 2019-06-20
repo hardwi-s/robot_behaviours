@@ -6,7 +6,7 @@ from arbitrator import Arbitrator
 from cruise import Cruise
 from escape import Escape
 from proximity_sensor import ProximitySensor
-from robot_base import RobotBase
+from smart_car_robot_base import SmartCarRobotBase
 from smart_car_motor_controller import SmartCarMotorController
 
 ENCODER_TICKS_PER_REV = 40
@@ -23,7 +23,7 @@ sensors = [front_ir_sensor, front_left_ir_sensor, front_right_ir_sensor]
 wheel_separation = 0.133
 max_speed = 0.52
 
-base = RobotBase(wheel_separation, max_speed, motor_controller, sensors)
+base = SmartCarRobotBase(wheel_separation, max_speed, motor_controller, sensors)
 
 cruise_behaviour = Cruise(0)
 escape_behaviour = Escape(1)
