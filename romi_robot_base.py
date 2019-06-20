@@ -1,10 +1,13 @@
 from robot_base import RobotBase
 
+TICKS_PER_REV = 1440.0
+WHEEL_DIAMETER = 0.07
 
-class SmartCarRobotBase(RobotBase):
-    def __init__(self, wheel_separation, max_speed, motor_controller, sensors):
+
+class RomiRobotBase(RobotBase):
+    def __init__(self, wheel_separation, max_speed, sensors, a_star):
         super().__init__(wheel_separation, max_speed, sensors)
-        self._motor_controller = motor_controller
+        self._a_star = a_star
 
     def do_motion_command(self, command):
         """
@@ -22,4 +25,9 @@ class SmartCarRobotBase(RobotBase):
             factor = self._max_motor_speed / max(speed_left, speed_right)
             speed_left *= factor
             speed_right *= factor
-        self._motor_controller.set_speeds(speed_left, speed_right)
+
+        # Speeds are in m/sec, convert to Romi speeds
+        self._a_star.motors(self._romi_speed(speed_left), self._romi_speed(speed_right))
+
+    def _romi_speed(self, motor_speed):
+        return motor_speed

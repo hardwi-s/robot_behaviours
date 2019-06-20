@@ -1,8 +1,9 @@
 from abc import ABCMeta, abstractmethod
+from sensor_reading import SensorReading
 
 
 class RobotBase(metaclass=ABCMeta):
-    def __init__(self, wheel_separation, max_speed):
+    def __init__(self, wheel_separation, max_speed, sensors):
         """
 
         :param wheel_separation: in metres
@@ -10,6 +11,7 @@ class RobotBase(metaclass=ABCMeta):
         """
         self._wheel_separation = wheel_separation
         self._max_motor_speed = max_speed
+        self._sensors = sensors
 
     def get_wheel_separation(self):
         return self._wheel_separation
@@ -32,10 +34,15 @@ class RobotBase(metaclass=ABCMeta):
         """
         pass
 
-    @abstractmethod
     def read_sensors(self):
         """
         Reads all the base sensors
         :return: A list of SensorReading
         """
-        pass
+        return_values = []
+        for sensor in self._sensors:
+            reading = SensorReading()
+            reading.name = sensor.name
+            reading.value = sensor.value
+            return_values.append(reading)
+        return return_values
