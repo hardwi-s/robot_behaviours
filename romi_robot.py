@@ -10,8 +10,8 @@ from a_star import AStar
 
 sensors = []
 
-wheel_separation = 0.133
-max_speed = 200
+wheel_separation = 0.133  # metres
+max_speed = 0.61  # m/sec
 
 a_star = AStar()
 base = RomiRobotBase(wheel_separation, max_speed, sensors, a_star)
