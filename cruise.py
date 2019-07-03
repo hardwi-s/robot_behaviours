@@ -1,10 +1,9 @@
 from behaviour import Behaviour
-from motion_command import MotionCommand
 
 
 class Cruise(Behaviour):
     """
-    Cruise behaviour. Moves the robot in a straight line.
+    Cruise behaviour. Moves the robot in a commanded path.
     """
     def __init__(self, priority, command):
         super(Cruise, self).__init__(priority, "cruise")

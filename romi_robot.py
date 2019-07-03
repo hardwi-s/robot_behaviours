@@ -8,6 +8,7 @@ from escape import Escape
 from motion_command import MotionCommand
 from romi_robot_base import RomiRobotBase
 from a_star import AStar
+from teleop_keys import TeleopKeys
 
 sensors = []
 
@@ -19,9 +20,10 @@ base = RomiRobotBase(wheel_separation, max_speed, sensors, a_star)
 
 cruise_command = MotionCommand(0.2, 0.0)
 cruise_behaviour = Cruise(0, cruise_command)
+teleop_keys_behaviour = TeleopKeys(0)
 escape_behaviour = Escape(1)
 
-behaviours = [cruise_behaviour, escape_behaviour]
+behaviours = [teleop_keys_behaviour, escape_behaviour]
 
 arbitrator = Arbitrator(behaviours)
 
