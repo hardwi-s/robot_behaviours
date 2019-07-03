@@ -6,11 +6,12 @@ class Cruise(Behaviour):
     """
     Cruise behaviour. Moves the robot in a straight line.
     """
-    def __init__(self, priority):
+    def __init__(self, priority, command):
         super(Cruise, self).__init__(priority, "cruise")
+        self._command = command
 
     def get_action(self, sensors=None):
-        return MotionCommand(0.4, 0)
+        return self._command
 
     def winner(self, winner=False):
         pass

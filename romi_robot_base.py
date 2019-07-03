@@ -13,6 +13,8 @@ class RomiRobotBase(RobotBase):
     def __init__(self, wheel_separation, max_speed, sensors, a_star):
         super().__init__(wheel_separation, max_speed, sensors)
         self._a_star = a_star
+        self._romi_speed_left = 0
+        self._romi_speed_right = 0
 
     def do_motion_command(self, command):
         """
@@ -32,7 +34,12 @@ class RomiRobotBase(RobotBase):
             speed_right *= factor
 
         # Speeds are in m/sec, convert to Romi speeds
-        self._a_star.motors(self._romi_speed(speed_left), self._romi_speed(speed_right))
+        romi_speed_left = self._romi_speed(speed_left)
+        romi_speed_right = self._romi_speed(speed_right)
+        if (romi_speed_left != self._romi_speed_left) or (romi_speed_right != self._romi_speed_right):
+            self._romi_speed_left = romi_speed_left
+            self._romi_speed_right = romi_speed_right
+            self._a_star.motors(self._romi_speed_left, self._romi_speed_right)
 
     def _romi_speed(self, motor_speed_m_per_sec):
         '''
@@ -41,4 +48,4 @@ class RomiRobotBase(RobotBase):
         :param motor_speed_m_per_sec:
         :return: motor speed in ticks per loop
         '''
-        return (motor_speed_m_per_sec * TICKS_PER_M) * ROMI_ENCODER_INTERVAL
+        return int((motor_speed_m_per_sec * TICKS_PER_M) * ROMI_ENCODER_INTERVAL)
