@@ -1,5 +1,6 @@
 import curses
 from threading import Thread, Lock
+from time import sleep
 
 from behaviour import Behaviour
 from motion_command import MotionCommand
@@ -15,7 +16,6 @@ class TeleopKeysThread(Thread):
 
     def run(self):
         self._run = True
-        print('Teleop keys thread running')
         while self._run:
             in_char = self._screen.getch()
             if in_char == curses.KEY_UP:
@@ -38,6 +38,7 @@ class TeleopKeysThread(Thread):
                 with self._lock:
                     self._command.velocity = 0.0
                     self._command.rotation = 0.0
+            sleep(0.01)
 
     def stop(self):
         self._run = False
@@ -54,28 +55,30 @@ class TeleopKeys(Behaviour):
     """
     def __init__(self, priority):
         super(TeleopKeys, self).__init__(priority, "teleop_keys")
-        self._run = False
         # Get the curses window, turn off echoing of keyboard to screen, turn on
         # instant (no waiting) key response, and use special values for cursor keys
         self._screen = curses.initscr()
         curses.noecho()
         curses.cbreak()
+        # Don't block on getch
+        self._screen.nodelay(True)
         self._screen.keypad(True)
         self._key_thread = TeleopKeysThread(self._screen)
         self._key_thread.start()
 
-    def __del__(self):
-        self._key_thread.stop()
-        # Close down curses properly, inc turn echo back on!
-        curses.nocbreak()
-        self._screen.keypad(0)
-        curses.echo()
-        curses.endwin()
-        print('Teleop keys shutdown')
+    def stop(self):
+        try:
+            self._key_thread.stop()
+        finally:
+            # Close down curses properly, inc turn echo back on!
+            curses.nocbreak()
+            self._screen.keypad(0)
+            curses.echo()
+            curses.endwin()
+            print('TeleopKeys stopped')
 
     def get_action(self, sensors=None):
-        if __name__ == '__main__':
-            return self._key_thread.get_command()
+        return self._key_thread.get_command()
 
     def winner(self, winner=False):
         pass

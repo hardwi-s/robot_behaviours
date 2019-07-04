@@ -22,24 +22,25 @@ class RomiRobotBase(RobotBase):
         these in the controller
         :param command: The motion as a MotionCommand
         """
-        angular_speed = command.rotation * self._wheel_separation
+        if command:
+            angular_speed = command.rotation * self._wheel_separation
 
-        speed_left = command.velocity - angular_speed
-        speed_right = command.velocity + angular_speed
+            speed_left = command.velocity - angular_speed
+            speed_right = command.velocity + angular_speed
 
-        # Adjust speeds if they exceed the maximum.
-        if max(speed_left, speed_right) > self._max_motor_speed:
-            factor = self._max_motor_speed / max(speed_left, speed_right)
-            speed_left *= factor
-            speed_right *= factor
+            # Adjust speeds if they exceed the maximum.
+            if max(speed_left, speed_right) > self._max_motor_speed:
+                factor = self._max_motor_speed / max(speed_left, speed_right)
+                speed_left *= factor
+                speed_right *= factor
 
-        # Speeds are in m/sec, convert to Romi speeds
-        romi_speed_left = self._romi_speed(speed_left)
-        romi_speed_right = self._romi_speed(speed_right)
-        if (romi_speed_left != self._romi_speed_left) or (romi_speed_right != self._romi_speed_right):
-            self._romi_speed_left = romi_speed_left
-            self._romi_speed_right = romi_speed_right
-            self._a_star.motors(self._romi_speed_left, self._romi_speed_right)
+            # Speeds are in m/sec, convert to Romi speeds
+            romi_speed_left = self._romi_speed(speed_left)
+            romi_speed_right = self._romi_speed(speed_right)
+            if (romi_speed_left != self._romi_speed_left) or (romi_speed_right != self._romi_speed_right):
+                self._romi_speed_left = romi_speed_left
+                self._romi_speed_right = romi_speed_right
+                self._a_star.motors(self._romi_speed_left, self._romi_speed_right)
 
     def _romi_speed(self, motor_speed_m_per_sec):
         '''

@@ -37,6 +37,7 @@ while True:
         base.do_motion_command(command)
         time.sleep(0.1)
     except KeyboardInterrupt:
+        teleop_keys_behaviour.stop()
         break
 
 command = MotionCommand()
