@@ -50,6 +50,9 @@ class AStar:
     def read_encoders(self):
         return self.read_unpack(39, 4, 'hh')
 
+    def read_encoders_total(self):
+        return self.read_unpack(43, 8, 'll')
+
     def test_read8(self):
         self.read_unpack(0, 8, 'cccccccc')
 
