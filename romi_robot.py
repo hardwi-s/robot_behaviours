@@ -9,13 +9,14 @@ from motion_command import MotionCommand
 from romi_robot_base import RomiRobotBase
 from a_star import AStar
 from teleop_keys import TeleopKeys
-
-sensors = []
+from romi_encoder_sensor import RomiEncoderSensor
 
 wheel_separation = 0.133  # metres
 max_speed = 0.61  # m/sec
 
 a_star = AStar()
+
+sensors = [RomiEncoderSensor("encoders", a_star)]
 base = RomiRobotBase(wheel_separation, max_speed, sensors, a_star)
 
 cruise_command = MotionCommand(0.2, 0.0)
