@@ -3,13 +3,13 @@
 import time
 
 from arbitrator import Arbitrator
-from cruise import Cruise
-from escape import Escape
+from behaviours.cruise import Cruise
+from behaviours.escape import Escape
 from motion_command import MotionCommand
-from romi_robot_base import RomiRobotBase
-from a_star import AStar
-from teleop_keys import TeleopKeys
-from romi_encoder_sensor import RomiEncoderSensor
+from romi.romi_robot_base import RomiRobotBase
+from romi.a_star import AStar
+from behaviours.teleop_keys import TeleopKeys
+from romi.romi_encoder_sensor import RomiEncoderSensor
 
 wheel_separation = 0.133  # metres
 max_speed = 0.61  # m/sec

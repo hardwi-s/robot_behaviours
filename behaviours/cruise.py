@@ -1,4 +1,4 @@
-from behaviour import Behaviour
+from behaviours.behaviour import Behaviour
 
 
 class Cruise(Behaviour):

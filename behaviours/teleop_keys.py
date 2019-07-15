@@ -2,7 +2,7 @@ import curses
 from threading import Thread, Lock
 from time import sleep
 
-from behaviour import Behaviour
+from behaviours.behaviour import Behaviour
 from motion_command import MotionCommand
 
 

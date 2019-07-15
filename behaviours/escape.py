@@ -1,8 +1,7 @@
-import time
 from enum import Enum
 from random import random
 
-from behaviour import Behaviour
+from behaviours.behaviour import Behaviour
 from motion_command import MotionCommand
 from timeout import Timeout
 

@@ -3,11 +3,11 @@
 import time
 
 from arbitrator import Arbitrator
-from cruise import Cruise
-from escape import Escape
+from behaviours.cruise import Cruise
+from behaviours.escape import Escape
 from proximity_sensor import ProximitySensor
-from smart_car_robot_base import SmartCarRobotBase
-from smart_car_motor_controller import SmartCarMotorController
+from smart_car.smart_car_robot_base import SmartCarRobotBase
+from smart_car.smart_car_motor_controller import SmartCarMotorController
 
 ENCODER_TICKS_PER_REV = 40
 
