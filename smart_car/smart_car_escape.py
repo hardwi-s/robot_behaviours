@@ -12,13 +12,13 @@ class State(Enum):
     TURNING = 3
 
 
-class Escape(Behaviour):
+class SmartCarEscape(Behaviour):
     """
     Escape behaviour. Moves the robot back then turns.
     """
 
     def __init__(self, priority):
-        super(Escape, self).__init__(priority, 'escape')
+        super(SmartCarEscape, self).__init__(priority, 'escape')
         self._state = State.WAITING_TO_START
         self._timeout = Timeout()
         self._clear_sensors()
@@ -86,6 +86,6 @@ class Escape(Behaviour):
 
 
 if __name__ == "__main__":
-    escape = Escape(0)
+    escape = SmartCarEscape(0)
     while True:
         print(str(escape._random_turn()))

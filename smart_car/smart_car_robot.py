@@ -4,7 +4,7 @@ import time
 
 from arbitrator import Arbitrator
 from behaviours.cruise import Cruise
-from behaviours.escape import Escape
+from smart_car.smart_car_escape import SmartCarEscape
 from proximity_sensor import ProximitySensor
 from smart_car.smart_car_robot_base import SmartCarRobotBase
 from smart_car.smart_car_motor_controller import SmartCarMotorController
@@ -26,7 +26,7 @@ max_speed = 0.52
 base = SmartCarRobotBase(wheel_separation, max_speed, motor_controller, sensors)
 
 cruise_behaviour = Cruise(0)
-escape_behaviour = Escape(1)
+escape_behaviour = SmartCarEscape(1)
 
 behaviours = [cruise_behaviour, escape_behaviour]
 
