@@ -1,74 +1,54 @@
-import socket
-import select
+import socketserver
+import time
+from threading import Thread
 
 
-class SocketServer:
-    """ Simple socket server that listens to one single client. """
+class MyTCPHandler(socketserver.BaseRequestHandler):
+    """
+    The RequestHandler class for our server.
 
-    def __init__(self, host='127.0.0.1', port=65432):
-        """ Initialize the server with a host and port to listen to. """
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.host = host
-        self.port = port
-        self.sock.bind((host, port))
-        self.sock.listen(1)
+    It is instantiated once per connection to the server, and must
+    override the handle() method to implement communication to the
+    client.
+    """
 
-    def close(self):
-        """ Close the server socket. """
-        print('Closing socket server (host {}, port {})'.format(self.host, self.port))
-        if self.sock:
-            self.sock.close()
-            self.sock = None
+    def handle(self):
+        # self.request is the TCP socket connected to the client
+        self.data = self.request.recv(1024).strip()
+        print("{} wrote:".format(self.client_address[0]))
+        print(self.data)
+        # just send back the same data, but upper-cased
+        self.request.sendall(self.data.upper())
 
-    def run_server(self):
-        """ Accept and handle an incoming connection. """
-        print('Starting socket server (host {}, port {})'.format(self.host, self.port))
 
-        client_sock, client_addr = self.sock.accept()
+class ServerThread(Thread):
+    def __init__(self):
+        super().__init__()
+        HOST, PORT = "localhost", 9999
 
-        print('Client {} connected'.format(client_addr))
+        # Create the server, binding to localhost on port 9999
+        self._server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
 
-        stop = False
-        while not stop:
-            if client_sock:
-                # Check if the client is still connected and if data is available:
-                try:
-                    rdy_read, rdy_write, sock_err = select.select([client_sock, ], [], [])
-                except select.error:
-                    print('Select() failed on socket with {}'.format(client_addr))
-                    return 1
+    def run(self):
+        # Activate the server; this will keep running until you
+        # interrupt the program with Ctrl-C
+        self._server.serve_forever()
 
-                if len(rdy_read) > 0:
-                    read_data = client_sock.recv(255)
-                    # Check if socket has been closed
-                    if len(read_data) == 0:
-                        print('{} closed the socket.'.format(client_addr))
-                        stop = True
-                    else:
-                        print('>>> Received: {}'.format(read_data.rstrip()))
-                        if read_data.rstrip() == b'quit':
-                            stop = True
-                        else:
-                            client_sock.send(read_data)
-            else:
-                print("No client is connected, SocketServer can't receive data")
-                stop = True
-
-        # Close socket
-        print('Closing connection with {}'.format(client_addr))
-        client_sock.close()
-        return 0
+    def stop(self):
+        self._server.shutdown()
+        self.join()
 
 
 def main():
-    server = SocketServer()
+    server = ServerThread()
     try:
+        server.start()
         while True:
-            server.run_server()
+            print('zzz')
+            time.sleep(1)
     except KeyboardInterrupt:
         print('Interrupted')
-        server.close()
+        server.stop()
     print('Exiting')
 
 
