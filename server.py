@@ -1,48 +1,39 @@
 import socketserver
 import time
-from threading import Thread
+from threading import Thread, current_thread
 
 
-class MyTCPHandler(socketserver.BaseRequestHandler):
-    """
-    The RequestHandler class for our server.
-
-    It is instantiated once per connection to the server, and must
-    override the handle() method to implement communication to the
-    client.
-    """
+class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
-        # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024).strip()
-        print("{} wrote:".format(self.client_address[0]))
-        print(self.data)
-        # just send back the same data, but upper-cased
-        self.request.sendall(self.data.upper())
+        data = str(self.request.recv(1024), 'ascii')
+        cur_thread = current_thread()
+        response = bytes("{}: {}".format(cur_thread.name, data), 'ascii')
+        self.request.sendall(response)
 
 
-class ServerThread(Thread):
-    def __init__(self):
-        super().__init__()
-        HOST, PORT = "localhost", 9999
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
 
-        # Create the server, binding to localhost on port 9999
-        self._server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
 
-    def run(self):
-        # Activate the server; this will keep running until you
-        # interrupt the program with Ctrl-C
-        self._server.serve_forever()
+class Server:
+    def __init__(self, host='localhost', port=0):
+        self.server = ThreadedTCPServer((host, port), ThreadedTCPRequestHandler)
+        # Start a thread with the server -- that thread will then start one
+        # more thread for each request
+        server_thread = Thread(target=self.server.serve_forever)
+        # Exit the server thread when the main thread terminates
+        server_thread.daemon = True
+        server_thread.start()
 
     def stop(self):
-        self._server.shutdown()
-        self.join()
+        self.server.shutdown()
+        self.server.server_close()
 
 
 def main():
-    server = ServerThread()
+    server = Server(host='localhost', port=65432)
     try:
-        server.start()
         while True:
             print('zzz')
             time.sleep(1)
