@@ -17,6 +17,18 @@ class Server(Thread):
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((self.host, self.port))
 
+    def _handle(self, data):
+        try:
+            in_string = data.decode().rstrip('\r\n')
+            if in_string == 'sensors':
+                with self._lock:
+                    sensors_string = jsonpickle.encode(self._sensors) + '\n'
+                    self.conn.sendall(sensors_string.encode('utf-8'))
+            else:
+                self.conn.sendall(b'unknown\n')
+        except UnicodeDecodeError:
+            self.conn.sendall(b'error\n')
+
     def run(self):
         self._run = True
         while self._run:
@@ -29,17 +41,9 @@ class Server(Thread):
                     while self._run:
                         data = self.conn.recv(1024)
                         if data:
-                            try:
-                                in_string = data.decode().rstrip('\r\n')
-                                if in_string == 'sensors':
-                                    with self._lock:
-                                        sensors_string = jsonpickle.encode(self._sensors) + '\n'
-                                        self.conn.sendall(sensors_string.encode('utf-8'))
-                                else:
-                                    self.conn.sendall(b'unknown\n')
-                            except UnicodeDecodeError:
-                                self.conn.sendall(b'error\n')
+                            self._handle(data)
                         else:
+                            print('Connection closed')
                             break
                 self.conn = None
             except OSError:
@@ -65,7 +69,7 @@ class Server(Thread):
 
 
 if __name__ == '__main__':
-    server = Server(host='192.168.1.101', port=65432)
+    server = Server(host='localhost', port=65432)
     server.start()
     try:
         while True:
