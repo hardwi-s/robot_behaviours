@@ -1,6 +1,7 @@
+import json
 import socket
 import time
-from threading import Thread
+from threading import Thread, Lock
 
 
 class Server(Thread):
@@ -10,6 +11,8 @@ class Server(Thread):
         self.port = port
         self._run = False
         self.conn = None
+        self._sensors = None
+        self._lock = Lock()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((self.host, self.port))
@@ -26,7 +29,11 @@ class Server(Thread):
                     while self._run:
                         data = self.conn.recv(1024)
                         if data:
-                            self.conn.sendall(data)
+                            if data == b'sensors':
+                                with self._lock:
+                                    self.conn.sendall(bytes(json.dumps(self._sensors)))
+                            else:
+                                self.conn.sendall(b'unknown')
                         else:
                             break
                 self.conn = None
@@ -46,6 +53,10 @@ class Server(Thread):
             except OSError:
                 pass
         self.join()
+
+    def update(self, sensors):
+        with self._lock:
+            self._sensors = sensors
 
 
 if __name__ == '__main__':

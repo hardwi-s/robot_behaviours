@@ -10,6 +10,7 @@ from romi.romi_robot_base import RomiRobotBase
 from romi.a_star import AStar
 from behaviours.teleop_keys import TeleopKeys
 from romi.romi_encoder_sensor import RomiEncoderSensor
+from simple_server import Server
 from switch_sensor import SwitchSensor
 
 wheel_separation = 0.133  # metres
@@ -31,9 +32,12 @@ behaviours = [teleop_keys_behaviour, escape_behaviour]
 
 arbitrator = Arbitrator(behaviours)
 
+server = Server(host='localhost', port=65432)
+
 while True:
     try:
         sensors = base.read_sensors()
+        server.update(sensors)
         # for sensor in sensors:
         #    print(sensor.name + " " + str(sensor.value))
         command = arbitrator.arbitrate(sensors)
