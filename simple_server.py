@@ -1,4 +1,4 @@
-import json
+import jsonpickle
 import socket
 import time
 from threading import Thread, Lock
@@ -29,11 +29,16 @@ class Server(Thread):
                     while self._run:
                         data = self.conn.recv(1024)
                         if data:
-                            if data == b'sensors':
-                                with self._lock:
-                                    self.conn.sendall(bytes(json.dumps(self._sensors)))
-                            else:
-                                self.conn.sendall(b'unknown')
+                            try:
+                                in_string = data.decode().rstrip('\r\n')
+                                if in_string == 'sensors':
+                                    with self._lock:
+                                        sensors_string = jsonpickle.encode(self._sensors) + '\n'
+                                        self.conn.sendall(sensors_string.encode('utf-8'))
+                                else:
+                                    self.conn.sendall(b'unknown\n')
+                            except UnicodeDecodeError:
+                                self.conn.sendall(b'error\n')
                         else:
                             break
                 self.conn = None
@@ -60,7 +65,7 @@ class Server(Thread):
 
 
 if __name__ == '__main__':
-    server = Server(host='localhost', port=65432)
+    server = Server(host='192.168.1.101', port=65432)
     server.start()
     try:
         while True:

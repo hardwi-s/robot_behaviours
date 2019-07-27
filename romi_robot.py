@@ -32,7 +32,8 @@ behaviours = [teleop_keys_behaviour, escape_behaviour]
 
 arbitrator = Arbitrator(behaviours)
 
-server = Server(host='localhost', port=65432)
+server = Server(host='192.168.1.101', port=65432)
+server.start()
 
 while True:
     try:
@@ -46,6 +47,7 @@ while True:
         time.sleep(0.1)
     except KeyboardInterrupt:
         teleop_keys_behaviour.stop()
+        server.stop()
         break
 
 command = MotionCommand()
