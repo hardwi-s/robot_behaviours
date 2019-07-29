@@ -3,8 +3,6 @@ import socket
 import time
 from threading import Thread, Lock
 
-from pose import Pose
-
 
 class Server(Thread):
     def __init__(self, host='localhost', port=0):
@@ -15,7 +13,6 @@ class Server(Thread):
         self.conn = None
         self._sensors = None
         self._lock = Lock()
-        self._pose=Pose()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((self.host, self.port))
@@ -27,8 +24,6 @@ class Server(Thread):
                 with self._lock:
                     sensors_string = jsonpickle.encode(self._sensors) + '\n'
                     self.conn.sendall(sensors_string.encode('utf-8'))
-                    pose_string = jsonpickle.encode(self._pose) + '\n'
-                    self.conn.sendall(pose_string.encode('utf-8'))
             else:
                 self.conn.sendall(b'unknown\n')
         except UnicodeDecodeError:
@@ -68,10 +63,9 @@ class Server(Thread):
                 pass
         self.join()
 
-    def update(self, sensors, pose):
+    def update(self, sensors):
         with self._lock:
             self._sensors = sensors
-            self._pose = pose
 
 
 if __name__ == '__main__':

@@ -12,6 +12,7 @@ class SmartCarRobotBase(RobotBase):
         these in the controller
         :param command: The motion as a MotionCommand
         """
+        super().do_motion_command(command)
         angular_speed = command.rotation * self._wheel_separation
 
         speed_left = command.velocity - angular_speed

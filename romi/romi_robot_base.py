@@ -10,8 +10,8 @@ TICKS_PER_M = TICKS_PER_REV / WHEEL_CIRCUMFERENCE
 
 
 class RomiRobotBase(RobotBase):
-    def __init__(self, wheel_separation, max_speed, sensors, a_star):
-        super().__init__(wheel_separation, max_speed, sensors)
+    def __init__(self, wheel_separation, max_speed, a_star):
+        super().__init__(wheel_separation, max_speed)
         self._a_star = a_star
         self._romi_speed_left = 0
         self._romi_speed_right = 0
@@ -22,6 +22,7 @@ class RomiRobotBase(RobotBase):
         these in the controller
         :param command: The motion as a MotionCommand
         """
+        super().do_motion_command(command)
         if command:
             angular_speed = command.rotation * self._wheel_separation
 
@@ -43,10 +44,10 @@ class RomiRobotBase(RobotBase):
                 self._a_star.motors(self._romi_speed_left, self._romi_speed_right)
 
     def _romi_speed(self, motor_speed_m_per_sec):
-        '''
+        """
         1 m/sec = (1440 / (pi * 0.07)) * 0.05 ticks/cycle
         speed = m/sec * 327.42
         :param motor_speed_m_per_sec:
         :return: motor speed in ticks per loop
-        '''
+        """
         return int((motor_speed_m_per_sec * TICKS_PER_M) * ROMI_ENCODER_INTERVAL)

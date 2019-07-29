@@ -4,27 +4,30 @@ import time
 
 from arbitrator import Arbitrator
 from behaviours.cruise import Cruise
-from dead_reckoner import DeadReckoner
+from romi.romi_pose_sensor import RomiPoseSensor
 from motion_command import MotionCommand
-from pose import Pose
 from romi.romi_escape import RomiEscape
 from romi.romi_robot_base import RomiRobotBase
 from romi.a_star import AStar
 from behaviours.teleop_keys import TeleopKeys
 from romi.romi_encoder_sensor import RomiEncoderSensor
+from sensors.sensors import Sensors
 from simple_server import Server
-from switch_sensor import SwitchSensor
+from sensors.switch_sensor import SwitchSensor
 
 wheel_separation = 0.133  # metres
 max_speed = 0.61  # m/sec
 
 a_star = AStar()
 
+base = RomiRobotBase(wheel_separation, max_speed, a_star)
+
 left_bumper = SwitchSensor(name='left_bumper', pin=27)
 right_bumper = SwitchSensor(name='right_bumper', pin=22)
-encoders = RomiEncoderSensor("encoders", a_star)
-sensors = [encoders, left_bumper, right_bumper]
-base = RomiRobotBase(wheel_separation, max_speed, sensors, a_star)
+encoders = RomiEncoderSensor('encoders', a_star)
+pose_sensor = RomiPoseSensor('pose')
+sensors = Sensors(sensors=[pose_sensor, encoders, left_bumper, right_bumper])
+
 
 cruise_command = MotionCommand(0.2, 0.0)
 cruise_behaviour = Cruise(0, cruise_command)
@@ -32,25 +35,18 @@ teleop_keys_behaviour = TeleopKeys(0)
 escape_behaviour = RomiEscape(1)
 
 behaviours = [teleop_keys_behaviour, escape_behaviour]
-
 arbitrator = Arbitrator(behaviours)
-
-pose = Pose()
-dead_reckoner = DeadReckoner(pose)
 
 server = Server(host='192.168.1.101', port=65432)
 server.start()
 
-command = MotionCommand()
-
 while True:
     try:
-        sensors = base.read_sensors()
-        dead_reckoner.update(encoders, command)
-        server.update(sensors, dead_reckoner.get_pose())
-        # for sensor in sensors:
+        sensor_readings = sensors.read_sensors()
+        server.update(sensor_readings)
+        # for sensor in sensor_readings:
         #    print(sensor.name + " " + str(sensor.value))
-        command = arbitrator.arbitrate(sensors)
+        command = arbitrator.arbitrate(sensor_readings)
         # print(arbitrator.get_winning_behaviour().name)
         base.do_motion_command(command)
 

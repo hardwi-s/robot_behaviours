@@ -5,7 +5,7 @@ import time
 from arbitrator import Arbitrator
 from behaviours.cruise import Cruise
 from smart_car.smart_car_escape import SmartCarEscape
-from proximity_sensor import ProximitySensor
+from sensors.proximity_sensor import ProximitySensor
 from smart_car.smart_car_robot_base import SmartCarRobotBase
 from smart_car.smart_car_motor_controller import SmartCarMotorController
 
