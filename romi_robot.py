@@ -25,7 +25,7 @@ base = RomiRobotBase(wheel_separation, max_speed, a_star)
 left_bumper = SwitchSensor(name='left_bumper', pin=27)
 right_bumper = SwitchSensor(name='right_bumper', pin=22)
 encoders = RomiEncoderSensor('encoders', a_star)
-pose_sensor = RomiPoseSensor('pose')
+pose_sensor = RomiPoseSensor('pose', base=base)
 sensors = Sensors(sensors=[pose_sensor, encoders, left_bumper, right_bumper])
 
 
