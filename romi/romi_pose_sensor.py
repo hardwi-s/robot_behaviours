@@ -2,6 +2,7 @@ from math import cos, sin, pi
 from threading import Lock
 
 from motion_command import MotionCommand
+from robot_base import RobotBase
 
 
 class RomiPoseSensor:
@@ -30,10 +31,13 @@ class RomiPoseSensor:
             self._pose['x'] = self._pose['x'] + new_x_component
             self._pose['y'] = self._pose['y'] + new_y_component
         elif current_motion_command.velocity == 0.0:
-            # Calculate the new angle
-            # Update pose
-            pass
+            left_distance = -(new_encoder_values[0] - self._old_left_encoder)
+            right_distance = new_encoder_values[1] - self._old_right_encoder
+            # Calculate the new angle and update pose
+            angle = (left_distance + right_distance)/self._base.get_wheel_separation()
+            self._pose['theta'] = (self._pose['theta'] + angle) % (2 * pi)
         else:
+            print('Invalid motion command for pose estimation')
             pass
         # Save new encoder values
         self._old_left_encoder = new_encoder_values[0]
@@ -51,8 +55,9 @@ class RomiPoseSensor:
 
 if __name__ == '__main__':
 
-    class MockBase:
-        def __init__(self):
+    class MockBase(RobotBase):
+        def __init__(self, wheel_separation, max_speed):
+            super().__init__(wheel_separation, max_speed)
             self._motion_command = MotionCommand()
 
         def get_motion_command(self):
@@ -81,12 +86,15 @@ if __name__ == '__main__':
                 self._dist_right = self._dist_right + motion.rotation
             return [self._dist_left, self._dist_right]
 
-    mock_base = MockBase()
+
+    wheel_separation = 0.133  # metres
+    max_speed = 0.61
+    mock_base = MockBase(wheel_separation, max_speed)
     mock_base.set_motion_command(MotionCommand(velocity=1.0, rotation=0.0))
     pose_sensor = RomiPoseSensor(name='pose', pose={'x': 0.0, 'y': 0.0, 'theta': 0.0},
                                  base=mock_base, encoders=MockEncoders(base=mock_base))
     for i in range(0, 10):
         print(pose_sensor.value)
-    mock_base.set_motion_command(MotionCommand(velocity=0.0, rotation=0.1))
+    mock_base.set_motion_command(MotionCommand(velocity=0.0, rotation=0.01))
     for i in range(0, 10):
         print(pose_sensor.value)
