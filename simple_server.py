@@ -3,6 +3,9 @@ import socket
 import time
 from threading import Thread, Lock
 
+from sensors.mock_pose_sensor import MockPoseSensor
+from sensors.sensors import Sensors
+
 
 class Server(Thread):
     def __init__(self, host='localhost', port=0):
@@ -71,8 +74,17 @@ class Server(Thread):
 if __name__ == '__main__':
     server = Server(host='localhost', port=65432)
     server.start()
+    mock_pose_sensor = MockPoseSensor()
+    sensors = Sensors(sensors=[mock_pose_sensor])
+    count = 0
     try:
         while True:
+            sensor_readings = sensors.read_sensors()
+            server.update(sensor_readings)
             time.sleep(1)
+            count = count + 1
+            if count > 10:
+                count = 0
+                mock_pose_sensor.reset()
     except KeyboardInterrupt:
         server.stop()
