@@ -1,3 +1,6 @@
+from math import atan
+
+
 class MockPoseSensor:
     def __init__(self, name='mock_pose'):
         self._name = name
@@ -9,7 +12,9 @@ class MockPoseSensor:
     @property
     def value(self):
         self._x = self._x + 1
-        return {'x': self._x, 'y': self._y, 'theta':self._theta}
+        self._y = self._y + 1
+        self._theta = atan(1)
+        return {'x': self._x, 'y': self._y, 'theta': self._theta}
 
     @property
     def name(self):
