@@ -6,10 +6,8 @@ class RomiEncoderSensor:
         self._name = name
         self._a_star = a_star
 
-    @property
-    def value(self):
+    def get_value(self):
         return self._a_star.read_encoders_total()
 
-    @property
-    def name(self):
+    def get_name(self):
         return self._name

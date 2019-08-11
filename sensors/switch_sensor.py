@@ -12,12 +12,10 @@ class SwitchSensor(DigitalInputDevice):
         super().__init__(pin=pin, pull_up=True, pin_factory=pin_factory)
         self._name = name
 
-    @property
-    def value(self):
+    def get_value(self):
         return super().value
 
-    @property
-    def name(self):
+    def get_name(self):
         return self._name
 
 
@@ -26,6 +24,6 @@ if __name__ == "__main__":
     right_sensor = SwitchSensor(name='right_switch', pin=22)
 
     while True:
-        print(left_sensor.name + " " + str(left_sensor.value))
-        print(right_sensor.name + " " + str(right_sensor.value))
+        print(left_sensor.get_name + " " + str(left_sensor.get_value))
+        print(right_sensor.get_name + " " + str(right_sensor.get_value))
         sleep(0.5)

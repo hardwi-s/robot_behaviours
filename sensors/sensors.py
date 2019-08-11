@@ -15,7 +15,7 @@ class Sensors:
         return_values = []
         for sensor in self._sensors:
             reading = SensorReading()
-            reading.name = sensor.name
-            reading.value = sensor.value
+            reading.name = sensor.get_name()
+            reading.value = sensor.get_value()
             return_values.append(reading)
         return return_values

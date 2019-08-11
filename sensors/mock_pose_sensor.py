@@ -9,15 +9,13 @@ class MockPoseSensor:
         self._theta = 0.0
         self._value = {'x': 0.0, 'y': 0.0, 'theta': 0.0}
 
-    @property
-    def value(self):
+    def get_value(self):
         self._x = self._x + 1
         self._y = self._y + 1
         self._theta = atan(1)
         return {'x': self._x, 'y': self._y, 'theta': self._theta}
 
-    @property
-    def name(self):
+    def get_name(self):
         return self._name
 
     def reset(self):

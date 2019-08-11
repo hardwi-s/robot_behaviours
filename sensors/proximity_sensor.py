@@ -12,12 +12,10 @@ class ProximitySensor(DigitalInputDevice):
         super().__init__(pin=pin, pull_up=False, pin_factory=pin_factory)
         self._name = name
 
-    @property
-    def value(self):
+    def get_value(self):
         return not super().value
 
-    @property
-    def name(self):
+    def get_name(self):
         return self._name
 
 
@@ -27,7 +25,7 @@ if __name__ == "__main__":
     front_ir_sensor = ProximitySensor(name='front_ir', pin=26)
 
     while True:
-        print(front_left_ir_sensor.name + " " + str(front_left_ir_sensor.value))
-        print(front_right_ir_sensor.name + " " + str(front_right_ir_sensor.value))
-        print(front_ir_sensor.name + " " + str(front_ir_sensor.value))
+        print(front_left_ir_sensor.get_name() + " " + str(front_left_ir_sensor.get_value()))
+        print(front_right_ir_sensor.get_name() + " " + str(front_right_ir_sensor.get_value()))
+        print(front_ir_sensor.get_name() + " " + str(front_ir_sensor.get_value()))
         sleep(0.5)

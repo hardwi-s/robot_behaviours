@@ -33,10 +33,11 @@ sensors = Sensors(sensors=[pose_sensor, encoders, left_bumper, right_bumper, dis
 
 cruise_command = MotionCommand(0.2, 0.0)
 cruise_behaviour = Cruise(0, cruise_command)
-teleop_keys_behaviour = TeleopKeys(0)
+#teleop_keys_behaviour = TeleopKeys(0)
 escape_behaviour = RomiEscape(1)
 
-behaviours = [teleop_keys_behaviour, escape_behaviour]
+#behaviours = [teleop_keys_behaviour, escape_behaviour]
+behaviours = [cruise_behaviour, escape_behaviour]
 arbitrator = Arbitrator(behaviours)
 
 server = Server(host='192.168.1.101', port=65432)
@@ -46,8 +47,8 @@ while True:
     try:
         sensor_readings = sensors.read_sensors()
         server.update(sensor_readings)
-        # for sensor in sensor_readings:
-        #    print(sensor.name + " " + str(sensor.value))
+        for sensor_reading in sensor_readings:
+            print(sensor_reading.name + " " + str(sensor_reading.value))
         command = arbitrator.arbitrate(sensor_readings)
         # print(arbitrator.get_winning_behaviour().name)
         base.do_motion_command(command)
@@ -55,7 +56,7 @@ while True:
         time.sleep(0.1)
 
     except KeyboardInterrupt:
-        teleop_keys_behaviour.stop()
+        # teleop_keys_behaviour.stop()
         server.stop()
         break
 
