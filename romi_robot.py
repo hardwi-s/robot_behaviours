@@ -12,6 +12,7 @@ from romi.a_star import AStar
 from behaviours.teleop_keys import TeleopKeys
 from romi.romi_encoder_sensor import RomiEncoderSensor
 from sensors.sensors import Sensors
+from sensors.ultrasonic_distance_sensor import UltrasonicDistanceSensor
 from simple_server import Server
 from sensors.switch_sensor import SwitchSensor
 
@@ -24,9 +25,10 @@ base = RomiRobotBase(wheel_separation, max_speed, a_star)
 
 left_bumper = SwitchSensor(name='left_bumper', pin=27)
 right_bumper = SwitchSensor(name='right_bumper', pin=22)
+distance = UltrasonicDistanceSensor(name='distance', echo=19, trigger=18)
 encoders = RomiEncoderSensor('encoders', a_star)
 pose_sensor = RomiPoseSensor('pose', base=base, encoders=encoders)
-sensors = Sensors(sensors=[pose_sensor, encoders, left_bumper, right_bumper])
+sensors = Sensors(sensors=[pose_sensor, encoders, left_bumper, right_bumper, distance])
 
 
 cruise_command = MotionCommand(0.2, 0.0)
