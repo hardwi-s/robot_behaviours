@@ -53,10 +53,6 @@ class AStar:
     def read_encoders_total(self):
         return self.read_unpack(43, 8, 'll')
 
-    def read_imu(self):
-        # TODO implement this
-        return self.read_unpack(51, 1, 'c')
-
     def test_read8(self):
         self.read_unpack(0, 8, 'cccccccc')
 
