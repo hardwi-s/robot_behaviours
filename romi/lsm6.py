@@ -1,6 +1,9 @@
 
 # The Arduino two-wire interface uses a 7-bit number for the address,
 # and sets the last bit correctly based on reads and writes
+
+from romi.lsm6_includes import *
+
 DS33_SA0_HIGH_ADDRESS = 0b1101011
 DS33_SA0_LOW_ADDRESS = 0b1101010
 TEST_REG_ERROR = -1
@@ -9,8 +12,12 @@ DS33_WHO_ID = 0x69
 class Lsm6:
     def __init__(self):
         self._device = device_auto
+        self._address = None
         self._io_timeout = 0  # 0 = no timeout
         self._did_timeout = False
+        self._a = [] # accelerometer readings
+        self._g = [] # gyro readings
+        self._last_status = None # status of last I2C transmission
 
     # Did a timeout occur in readAcc(), readGyro(), or read() since the last call to timeoutOccurred()?
     def timeout_occurred(self):
@@ -21,7 +28,7 @@ class Lsm6:
     def set_timeout(self, timeout):
         self._io_timeout = timeout
 
-    def get_imeout(self):
+    def get_timeout(self):
         return self._io_timeout
 
     def init(self, device, sa0):
@@ -30,79 +37,37 @@ class Lsm6:
             # check for LSM6DS33 if device is unidentified or was specified to be this type
             if device == device_auto || device == device_DS33:
                 # check SA0 high address unless SA0 was specified to be low
-                if sa0 != sa0_low && testReg(DS33_SA0_HIGH_ADDRESS, WHO_AM_I) == DS33_WHO_ID:
+                if sa0 != sa0_low and testReg(DS33_SA0_HIGH_ADDRESS, WHO_AM_I) == DS33_WHO_ID:
                     sa0 = sa0_high
                     if device == device_auto:
                         device = device_DS33
                 # check SA0 low address unless SA0 was specified to be high
-                elif sa0 != sa0_high && testReg(DS33_SA0_LOW_ADDRESS, WHO_AM_I) == DS33_WHO_ID:
+                elif sa0 != sa0_high and testReg(DS33_SA0_LOW_ADDRESS, WHO_AM_I) == DS33_WHO_ID:
                     sa0 = sa0_low
                     if device == device_auto:
                         device = device_DS33
             # make sure device and SA0 were successfully detected; otherwise, indicate failure
-            if device == device_auto || sa0 == sa0_auto:
+            if device == device_auto or sa0 == sa0_auto:
                 return False
 
         self._device = device
 
         if device == device_DS33:
-            address = (sa0 == sa0_high) ? DS33_SA0_HIGH_ADDRESS: DS33_SA0_LOW_ADDRESS
+            if sa0 == sa0_high:
+                self._address = DS33_SA0_HIGH_ADDRESS
+            else:
+                self._address = DS33_SA0_LOW_ADDRESS
 
         return True
 
-/ *
-Enables
-the
-LSM6
-'s accelerometer and gyro. Also:
-- Sets
-sensor
-full
-scales(gain)
-to
-default
-power - on
-values, which
-are
-+ / - 2
-g
-for accelerometer and 245 dps for gyro
-- Selects 1.66 kHz (high performance) ODR (output data rate) for accelerometer
-and 1.66 kHz (high performance) ODR for gyro.(These are the ODR settings for
-which
-the
-electrical
-characteristics
-are
-specified in the
-datasheet.)
-- Enables
-automatic
-increment
-of
-register
-address
-during
-multiple
-byte
-access
-Note
-that
-this
-function
-will
-also
-reset
-other
-settings
-controlled
-by
-the
-registers
-it
-writes
-to.
-* /
+'''
+Enables the LSM6 's accelerometer and gyro. Also:
+- Sets sensor full scales(gain) to default power - on values, which are + / - 2g for accelerometer and 245 dps for gyro
+- Selects 1.66 kHz (high performance) ODR (output data rate) for accelerometer and 1.66 kHz (high performance) ODR for gyro.
+(These are the ODR settings for which the electrical characteristics are specified in the datasheet.)
+- Enables automatic increment of register address during multiple byte access Note that this function will
+also reset other settings controlled by the registers it writes to.
+'''
 void
 LSM6::enableDefault(void)
 {
