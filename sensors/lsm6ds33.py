@@ -242,9 +242,7 @@ class LSM6DS33(I2C):
         """ Return a 7-element list of the raw output of all three
             sensors, accelerometer, gyroscope, temperature.
         """
-        return self.getAccelerometerRaw() \
-               + self.getGyroscopeRaw() \
-               + [self.getLSMTemperatureRaw()]
+        return self.getAccelerometerRaw() + self.getGyroscopeRaw() + [self.getLSMTemperatureRaw()]
 
     def getLSMTemperatureCelsius(self, rounded=True):
         """ Return the temperature sensor reading in C as a floating
