@@ -11,6 +11,7 @@ from romi.romi_robot_base import RomiRobotBase
 from romi.a_star import AStar
 from behaviours.teleop_keys import TeleopKeys
 from romi.romi_encoder_sensor import RomiEncoderSensor
+from romi.romi_usonic_escape import RomiUsonicEscape
 from sensors.sensors import Sensors
 from sensors.ultrasonic_distance_sensor import UltrasonicDistanceSensor
 from simple_server import Server
@@ -34,10 +35,11 @@ sensors = Sensors(sensors=[pose_sensor, encoders, left_bumper, right_bumper, dis
 cruise_command = MotionCommand(0.2, 0.0)
 cruise_behaviour = Cruise(0, cruise_command)
 #teleop_keys_behaviour = TeleopKeys(0)
-escape_behaviour = RomiBumpEscape(1)
+bump_escape_behaviour = RomiBumpEscape(2)
+usonic_escape_behaviour = RomiUsonicEscape(1)
 
 #behaviours = [teleop_keys_behaviour, escape_behaviour]
-behaviours = [cruise_behaviour, escape_behaviour]
+behaviours = [cruise_behaviour, usonic_escape_behaviour, bump_escape_behaviour]
 arbitrator = Arbitrator(behaviours)
 
 server = Server(host='192.168.1.101', port=65432)
