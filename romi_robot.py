@@ -6,7 +6,7 @@ from arbitrator import Arbitrator
 from behaviours.cruise import Cruise
 from romi.romi_pose_sensor import RomiPoseSensor
 from motion_command import MotionCommand
-from romi.romi_escape import RomiEscape
+from romi.romi_bump_escape import RomiBumpEscape
 from romi.romi_robot_base import RomiRobotBase
 from romi.a_star import AStar
 from behaviours.teleop_keys import TeleopKeys
@@ -34,7 +34,7 @@ sensors = Sensors(sensors=[pose_sensor, encoders, left_bumper, right_bumper, dis
 cruise_command = MotionCommand(0.2, 0.0)
 cruise_behaviour = Cruise(0, cruise_command)
 #teleop_keys_behaviour = TeleopKeys(0)
-escape_behaviour = RomiEscape(1)
+escape_behaviour = RomiBumpEscape(1)
 
 #behaviours = [teleop_keys_behaviour, escape_behaviour]
 behaviours = [cruise_behaviour, escape_behaviour]

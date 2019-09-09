@@ -10,13 +10,13 @@ class State(Enum):
     TURNING = 3
 
 
-class RomiEscape(Behaviour):
+class RomiBumpEscape(Behaviour):
     """
     Escape behaviour. Moves the robot back then turns.
     """
 
     def __init__(self, priority):
-        super(RomiEscape, self).__init__(priority, 'escape')
+        super(RomiBumpEscape, self).__init__(priority, 'bump_escape')
         self._state = State.WAITING_TO_START
         self._timeout = Timeout()
         self._clear_sensors()
