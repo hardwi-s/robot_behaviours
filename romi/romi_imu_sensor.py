@@ -1,5 +1,8 @@
-from time import sleep
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
+from time import sleep
 from sensors.lsm6ds33 import LSM6DS33
 
 
