@@ -16,7 +16,7 @@ class RomiImuSensor:
         self._imu.enableLSM()
 
     def get_value(self):
-        return self._imu.getAllRaw()
+        return self._imu.getAllScaled()
 
     def get_name(self):
         return self._name
@@ -26,6 +26,6 @@ if __name__ == '__main__':
     imu = RomiImuSensor(name='imu')
     while True:
         values = imu.get_value()
-        print('accel ' + str(values[0]) + ' ' + str(values[1]) + ' ' + str(values[2])
-              + ' gyro  ' + str(values[3]) + ' ' + str(values[4]) + ' ' + str(values[5]))
+        print('accel {0:7.3f} {1:7.3f} {2:7.3f} gyro {3:7.3f} {4:7.3f} {5:7.3f} temp {6:7.1f}'
+              .format(values[0], values[1], values[2], values[3], values[4], values[5], values[6]))
         sleep(.25)

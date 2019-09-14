@@ -244,6 +244,22 @@ class LSM6DS33(I2C):
         """
         return self.getAccelerometerRaw() + self.getGyroscopeRaw() + [self.getLSMTemperatureRaw()]
 
+    def getAllScaled(self):
+        """ Return a 7-element list of the scaled output of all three
+            sensors, accelerometer, gyroscope, temperature.
+        """
+        accel = self.getAccelerometerRaw()
+        accel[0] = accel[0] * ACCEL_GAIN_MG_2 / 1000.0
+        accel[1] = accel[1] * ACCEL_GAIN_MG_2 / 1000.0
+        accel[2] = accel[2] * ACCEL_GAIN_MG_2 / 1000.0
+
+        gyro = self.getGyroscopeRaw()
+        gyro[0] = gyro[0] * GYRO_GAIN_MDPS_250 / 1000.0
+        gyro[1] = gyro[1] * GYRO_GAIN_MDPS_250 / 1000.0
+        gyro[2] = gyro[2] * GYRO_GAIN_MDPS_250 / 1000.0
+
+        return accel + gyro + [self.getLSMTemperatureCelsius()]
+
     def getLSMTemperatureCelsius(self, rounded=True):
         """ Return the temperature sensor reading in C as a floating
             point number rounded to one decimal place.
