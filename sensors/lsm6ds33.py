@@ -185,16 +185,16 @@ class LSM6DS33(I2C):
 
         if accelerometer:
             # Accelerometer
-            # 1.66 kHz / +/- 4g
-            # 01011000b
-            self._writeRegister(LSM6DS33_ADDR, self.LSM_CTRL1_XL, 0x58)
+            # 1.66 kHz high performance / +/- 2g
+            # 10000000b
+            self._writeRegister(LSM6DS33_ADDR, self.LSM_CTRL1_XL, 0x80)
             self.accEnabled = True
 
         if gyroscope:
             # Gyro
-            # 208 Hz high performance / 1000 dps
-            # 01011000b
-            self._writeRegister(LSM6DS33_ADDR, self.LSM_CTRL2_G, 0x58)
+            # 1.66 kHz high performance / 245 dps
+            # 10000000b
+            self._writeRegister(LSM6DS33_ADDR, self.LSM_CTRL2_G, 0x80)
             self.gyroEnabled = True
 
         if temperature:
@@ -221,7 +221,7 @@ class LSM6DS33(I2C):
             raise (Exception('Gyroscope has to be enabled first'))
 
         # Read sensor data
-        return self._getSensorRawLoHi3(LSM6DS33_ADDR, self.lsmAccRegisters)
+        return self._getSensorRawLoHi3(LSM6DS33_ADDR, self.lsmGyroRegisters)
 
     def getLSMTemperatureRaw(self):
         """ Return the raw temperature value. """
@@ -230,7 +230,7 @@ class LSM6DS33(I2C):
             raise (Exception('Temperature sensor has to be enabled first'))
 
         # Read sensor data
-        return self._getSensorRawLoHi1(LSM6DS33_ADDR, self.lsmAccRegisters)
+        return self._getSensorRawLoHi1(LSM6DS33_ADDR, self.lsmTempRegisters)
 
     def getIMURaw(self):
         """ Return a 6-element list of the raw output values of both IMU
