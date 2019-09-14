@@ -31,7 +31,7 @@ class RomiUsonicEscape(Behaviour):
                 self._f_set = sensor.value
 
     def _is_sensor_active(self):
-        return self._f_set < 0.1
+        return self._f_set < 0.2
 
     def get_action(self, sensors=None):
         self._set_sensors(sensors)
