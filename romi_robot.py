@@ -4,6 +4,8 @@ import time
 
 from arbitrator import Arbitrator
 from behaviours.cruise import Cruise
+from romi.romi_imu_escape import RomiImuEscape
+from romi.romi_imu_sensor import RomiImuSensor
 from romi.romi_pose_sensor import RomiPoseSensor
 from motion_command import MotionCommand
 from romi.romi_bump_escape import RomiBumpEscape
@@ -29,17 +31,19 @@ right_bumper = SwitchSensor(name='right_bumper', pin=22)
 distance = UltrasonicDistanceSensor(name='distance', echo=19, trigger=18)
 encoders = RomiEncoderSensor('encoders', a_star)
 pose_sensor = RomiPoseSensor('pose', base=base, encoders=encoders)
-sensors = Sensors(sensors=[pose_sensor, encoders, left_bumper, right_bumper, distance])
+imu_sensor = RomiImuSensor('imu')
+sensors = Sensors(sensors=[pose_sensor, encoders, left_bumper, right_bumper, distance, imu_sensor])
 
 
 cruise_command = MotionCommand(0.2, 0.0)
 cruise_behaviour = Cruise(0, cruise_command)
 #teleop_keys_behaviour = TeleopKeys(0)
-bump_escape_behaviour = RomiBumpEscape(2)
-usonic_escape_behaviour = RomiUsonicEscape(1)
+bump_escape_behaviour = RomiBumpEscape(3)
+usonic_escape_behaviour = RomiUsonicEscape(2)
+imu_escape_behaviour = RomiImuEscape(1)
 
 #behaviours = [teleop_keys_behaviour, escape_behaviour]
-behaviours = [cruise_behaviour, usonic_escape_behaviour, bump_escape_behaviour]
+behaviours = [cruise_behaviour, usonic_escape_behaviour, bump_escape_behaviour, imu_escape_behaviour]
 arbitrator = Arbitrator(behaviours)
 
 server = Server(host='192.168.1.101', port=65432)
