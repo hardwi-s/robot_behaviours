@@ -7,14 +7,17 @@ WHEEL_DIAMETER = 0.07
 WHEEL_CIRCUMFERENCE = pi * WHEEL_DIAMETER
 ROMI_ENCODER_INTERVAL = 50.0 / 1000.0   # 50 msec
 TICKS_PER_M = TICKS_PER_REV / WHEEL_CIRCUMFERENCE
+INTERVAL_SEC = 0.1
 
 
 class RomiRobotBase(RobotBase):
-    def __init__(self, wheel_separation, max_speed, a_star):
+    def __init__(self, wheel_separation, max_speed, max_accel, max_deccel, a_star):
         super().__init__(wheel_separation, max_speed)
         self._a_star = a_star
         self._romi_speed_left = 0
         self._romi_speed_right = 0
+        self._max_accel = max_accel
+        self._max_deccel = max_deccel
 
     def do_motion_command(self, command):
         """
@@ -38,10 +41,24 @@ class RomiRobotBase(RobotBase):
             # Speeds are in m/sec, convert to Romi speeds
             romi_speed_left = self._romi_speed(speed_left)
             romi_speed_right = self._romi_speed(speed_right)
+
+            # Apply acceleration
+            romi_speed_left = romi_speed_left + self._accelerate(self._romi_speed_left, romi_speed_left)
+            romi_speed_right = romi_speed_right + self._accelerate(self._romi_speed_right, romi_speed_right)
+
+            # If new speeds, apply them
             if (romi_speed_left != self._romi_speed_left) or (romi_speed_right != self._romi_speed_right):
                 self._romi_speed_left = romi_speed_left
                 self._romi_speed_right = romi_speed_right
                 self._a_star.motors(self._romi_speed_left, self._romi_speed_right)
+
+    def _accelerate(self, current_speed, speed):
+        acceleration = (speed - current_speed) / INTERVAL_SEC
+        if acceleration > self._max_accel:
+            acceleration = self._max_accel
+        if acceleration < self._max_deccel:
+            acceleration = self._max_deccel
+        return acceleration * INTERVAL_SEC
 
     def _romi_speed(self, motor_speed_m_per_sec):
         """
