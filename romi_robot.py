@@ -24,7 +24,7 @@ max_speed = 0.61  # m/sec
 
 a_star = AStar()
 
-base = RomiRobotBase(wheel_separation, max_speed, 30.0, -30.0, a_star)
+base = RomiRobotBase(wheel_separation, max_speed, a_star)
 
 left_bumper = SwitchSensor(name='left_bumper', pin=27)
 right_bumper = SwitchSensor(name='right_bumper', pin=22)
