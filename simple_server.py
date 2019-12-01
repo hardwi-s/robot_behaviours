@@ -4,6 +4,7 @@ import time
 from threading import Thread, Lock
 
 from sensors.mock_pose_sensor import MockPoseSensor
+from sensors.mock_distance_sensor import MockDistanceSensor
 from sensors.sensors import Sensors
 
 
@@ -75,7 +76,8 @@ if __name__ == '__main__':
     server = Server(host='localhost', port=65432)
     server.start()
     mock_pose_sensor = MockPoseSensor()
-    sensors = Sensors(sensors=[mock_pose_sensor])
+    mock_distance_sensor = MockDistanceSensor()
+    sensors = Sensors(sensors=[mock_pose_sensor, mock_distance_sensor])
     count = 0
     try:
         while True:
