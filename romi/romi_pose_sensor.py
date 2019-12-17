@@ -1,5 +1,4 @@
 from math import cos, sin, pi
-from threading import Lock
 
 from motion_command import MotionCommand
 from robot_base import RobotBase
@@ -18,29 +17,24 @@ class RomiPoseSensor:
         self._old_right_encoder = 0
 
     def _update(self):
-        current_motion_command = self._base.get_motion_command()
         new_encoder_values = self._encoders.get_value()
-        if current_motion_command is not None:
-            if current_motion_command.rotation == 0.0:
-                # Calculate the distance travelled
-                left_distance = new_encoder_values[0] - self._old_left_encoder
-                right_distance = new_encoder_values[1] - self._old_right_encoder
-                new_distance = (left_distance + right_distance) / 2
-                # Resolve into components
-                new_x_component = new_distance * cos(self._pose['theta'])
-                new_y_component = new_distance * sin(self._pose['theta'])
-                # Update pose
-                self._pose['x'] = self._pose['x'] + new_x_component
-                self._pose['y'] = self._pose['y'] + new_y_component
-            elif current_motion_command.velocity == 0.0:
-                left_distance = -(new_encoder_values[0] - self._old_left_encoder)
-                right_distance = new_encoder_values[1] - self._old_right_encoder
-                # Calculate the new angle and update pose
-                angle = (left_distance + right_distance)/self._base.get_wheel_separation()
-                self._pose['theta'] = (self._pose['theta'] + angle) % (2 * pi)
-            else:
-                print('Invalid motion command for pose estimation')
-                pass
+        # Calculate the distance travelled
+        left_distance = new_encoder_values[0] - self._old_left_encoder
+        right_distance = new_encoder_values[1] - self._old_right_encoder
+
+        angle = (right_distance - left_distance) / self._base.get_wheel_separation()
+        self._pose['theta'] = (self._pose['theta'] + angle) % (2 * pi)
+
+        distance = (left_distance + right_distance) / 2
+
+        # Resolve into components
+        new_x_component = distance * cos(self._pose['theta'])
+        new_y_component = distance * sin(self._pose['theta'])
+
+        # Update pose
+        self._pose['x'] = self._pose['x'] + new_x_component
+        self._pose['y'] = self._pose['y'] + new_y_component
+
         # Save new encoder values
         self._old_left_encoder = new_encoder_values[0]
         self._old_right_encoder = new_encoder_values[1]
@@ -93,7 +87,7 @@ if __name__ == '__main__':
     pose_sensor = RomiPoseSensor(name='pose', pose={'x': 0.0, 'y': 0.0, 'theta': 0.0},
                                  base=mock_base, encoders=MockEncoders(base=mock_base))
     for i in range(0, 10):
-        print(pose_sensor.get_value)
+        print(pose_sensor.get_value())
     mock_base.set_motion_command(MotionCommand(velocity=0.0, rotation=0.01))
     for i in range(0, 10):
-        print(pose_sensor.get_value)
+        print(pose_sensor.get_value())
